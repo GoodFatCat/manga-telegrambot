@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up MySQL
-      uses: mirromutth/mysql-action@v3
+      uses: mirromutth/mysql-action@v1.1
       with:
         mysql database: 'matgbot_db'
         mysql root password: 'Mangalibholo18'
