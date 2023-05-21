@@ -2,7 +2,6 @@ package com.github.goodfatcat.mangatelegrambot.command;
 
 import com.github.goodfatcat.mangatelegrambot.service.SendBotMessageService;
 import com.github.goodfatcat.mangatelegrambot.service.TelegramUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
@@ -15,7 +14,6 @@ public class StatCommand implements Command{
 
     public final static String STAT_MESSAGE = "Mangalib telegram bot использует %s человек.";
 
-    @Autowired
     public StatCommand(SendBotMessageService sendBotMessageService, TelegramUserService telegramUserService) {
         this.telegramUserService = telegramUserService;
         this.sendBotMessageService = sendBotMessageService;

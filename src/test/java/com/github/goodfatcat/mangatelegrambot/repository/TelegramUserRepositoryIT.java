@@ -26,7 +26,7 @@ public class TelegramUserRepositoryIT {
     @Autowired
     private TelegramUserRepository telegramUserRepository;
 
-    @Sql(scripts = {"/sql/clearDbs.sql", "/sql/telegram_users.sql"})
+    @Sql(scripts = {"/sql/clearDB.sql", "/sql/telegram_users.sql"})
     @Test
     public void shouldProperlyFindAllActiveUsers() {
         //when
@@ -36,6 +36,15 @@ public class TelegramUserRepositoryIT {
         Assertions.assertEquals(5, users.size());
     }
 
+    @Test
+    @Sql(scripts = {"/sql/clearDB.sql","/sql/mangas.sql", "/sql/telegram_users.sql", "/sql/user_manga.sql"})
+    public void getUserMangaList() {
+        Optional<TelegramUser> user = telegramUserRepository.findById("123456789");
+        TelegramUser telegramUser = user.orElseThrow();
+        Assertions.assertEquals(3, telegramUser.getReadableManga().size());
+    }
+
+    @Test
     public void shouldProperlySaveTelegramUser() {
         //given
         TelegramUser telegramUser = new TelegramUser();

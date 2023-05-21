@@ -1,11 +1,11 @@
 package com.github.goodfatcat.mangatelegrambot.repository.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Telegram user entity.
@@ -22,4 +22,12 @@ public class TelegramUser {
 
     @Column(name = "active")
     private boolean active;
+
+    @Column(name = "manga_id")
+    private long mangaId;
+
+    @ManyToMany(mappedBy = "readers")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<Manga> readableManga;
 }
