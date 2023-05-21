@@ -1,6 +1,9 @@
 package com.github.goodfatcat.mangatelegrambot.command;
 
+import com.github.goodfatcat.mangatelegrambot.service.MangaService;
 import com.github.goodfatcat.mangatelegrambot.service.SendBotMessageService;
+import com.github.goodfatcat.mangatelegrambot.service.TelegramUserService;
+import com.github.goodfatcat.mangatelegrambot.service.UserMangaService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,9 +12,6 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 
-import static org.assertj.core.api.AssertionsForClassTypes.not;
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
-
 @DisplayName("Unit-level testing for CommandContainer")
 public class CommandContainerTest {
     private CommandContainer commandContainer;
@@ -19,7 +19,14 @@ public class CommandContainerTest {
     @BeforeEach
     public void init() {
         SendBotMessageService sendBotMessageService = Mockito.mock(SendBotMessageService.class);
-        commandContainer = new CommandContainer(sendBotMessageService);
+        TelegramUserService telegramUserService = Mockito.mock(TelegramUserService.class);
+        MangaService mangaService = Mockito.mock(MangaService.class);
+        UserMangaService userMangaService = Mockito.mock(UserMangaService.class);
+        commandContainer = new CommandContainer(
+                sendBotMessageService,
+                telegramUserService,
+                mangaService,
+                userMangaService);
     }
 
     @Test

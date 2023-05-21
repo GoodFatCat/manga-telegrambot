@@ -1,6 +1,6 @@
 package com.github.goodfatcat.mangatelegrambot.service;
 
-/*
+/**
  * Service for sending messages via telegram-bot
  */
 

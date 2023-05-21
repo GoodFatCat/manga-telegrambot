@@ -1,20 +1,20 @@
 package com.github.goodfatcat.mangatelegrambot.bot;
 
 import com.github.goodfatcat.mangatelegrambot.command.CommandContainer;
+import com.github.goodfatcat.mangatelegrambot.service.MangaService;
 import com.github.goodfatcat.mangatelegrambot.service.SendBotMessageServiceImpl;
+import com.github.goodfatcat.mangatelegrambot.service.TelegramUserService;
+import com.github.goodfatcat.mangatelegrambot.service.UserMangaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.Locale;
 
 import static com.github.goodfatcat.mangatelegrambot.command.CommandName.NO;
 
-/*
-Bot sends notifications to users
+/**
+ * Bot sends notifications to users
  */
 
 @Component
@@ -30,13 +30,17 @@ public class MangaTelegramBot extends TelegramLongPollingBot {
 
     private CommandContainer commandContainer;
 
-    public MangaTelegramBot() {
-        this.commandContainer = new CommandContainer(new SendBotMessageServiceImpl(this));
+    @Autowired
+    public MangaTelegramBot(TelegramUserService telegramUserService,
+                            MangaService mangaService,
+                            UserMangaService userMangaService) {
+        this.commandContainer = new CommandContainer(
+                new SendBotMessageServiceImpl(this), telegramUserService, mangaService, userMangaService);
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        if(update.hasMessage() && update.getMessage().hasText()) {
+        if (update.hasMessage() && update.getMessage().hasText()) {
             String message = update.getMessage().getText().trim();
             if (message.startsWith(COMMAND_PREFIX)) {
                 String commandIdentifier = message.split(" ")[0].toLowerCase();

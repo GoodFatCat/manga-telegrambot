@@ -1,8 +1,7 @@
 package com.github.goodfatcat.mangatelegrambot.command;
 
 import com.github.goodfatcat.mangatelegrambot.bot.MangaTelegramBot;
-import com.github.goodfatcat.mangatelegrambot.service.SendBotMessageService;
-import com.github.goodfatcat.mangatelegrambot.service.SendBotMessageServiceImpl;
+import com.github.goodfatcat.mangatelegrambot.service.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -16,6 +15,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 abstract class AbstractCommandTest {
     protected MangaTelegramBot mangaTelegramBot = Mockito.mock(MangaTelegramBot.class);
     protected SendBotMessageService sendBotMessageService = new SendBotMessageServiceImpl(mangaTelegramBot);
+    protected TelegramUserService telegramUserService = Mockito.mock(TelegramUserService.class);
+    protected MangaService mangaService = Mockito.mock(MangaService.class);
+    protected UserMangaService userMangaService = Mockito.mock(UserMangaService.class);
 
     abstract String getCommandName();
 
