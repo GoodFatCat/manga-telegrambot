@@ -46,12 +46,21 @@ public class MangaServiceImplTest {
     @Sql(scripts = {"/sql/clearDB.sql"})
     public void saveAllManga() {
         //init
+        List<Manga> expectedData = initData();
+
+        mangaService.saveAll(expectedData);
+
+        List<Manga> actualData = mangaService.getAllManga();
+        Assertions.assertEquals(expectedData, actualData);
+    }
+
+    private static List<Manga> initData() {
         JsonManga jsonManga = new JsonManga();
         jsonManga.setId(1);
         jsonManga.setCover("QPXzTLH6zrIw");
         jsonManga.setStatus(2);
         jsonManga.setRusName("Берсерк");
-        jsonManga.setLastChapterAt(LocalDateTime.of(2019, 8, 23, 8, 23, 39));
+        jsonManga.setLastChapterAt(LocalDateTime.of(1999, 8, 23, 8, 23, 39));
         jsonManga.setSlug("berserk");
 
         Chapter chapter1 = new Chapter();
@@ -67,7 +76,7 @@ public class MangaServiceImplTest {
         jsonManga.setCover("CvABU1zFzds8");
         jsonManga.setStatus(2);
         jsonManga.setRusName("Получеловек");
-        jsonManga.setLastChapterAt(LocalDateTime.of(2021, 2, 12, 14, 30, 40));
+        jsonManga.setLastChapterAt(LocalDateTime.of(1999, 2, 12, 14, 30, 40));
         jsonManga.setSlug("ajin");
 
         Chapter chapter2 = new Chapter();
@@ -82,10 +91,22 @@ public class MangaServiceImplTest {
         List<Manga> expectedData = new ArrayList<>();
         expectedData.add(manga1);
         expectedData.add(manga2);
+        return expectedData;
+    }
 
-        mangaService.saveAll(expectedData);
+    @Test
+    public void shouldProperlyUpdateLastChapterAt() {
+        List<Manga> oldMangas = initData();
+        mangaService.saveAll(oldMangas);
 
-        List<Manga> actualData = mangaService.getAllManga();
-        Assertions.assertEquals(expectedData, actualData);
+        mangaService.updateAllMangaLastChapterAt();
+
+        List<Manga> newMangas = mangaService.getAllManga();
+
+        Assertions.assertNotEquals(oldMangas, newMangas);
+        Assertions.assertEquals(mangaService.getManga(1).getLastChapterAt(),
+                LocalDateTime.of(2019, 8, 23, 8, 23, 39));
+        Assertions.assertEquals(mangaService.getManga(0).getLastChapterAt(),
+                LocalDateTime.of(2021, 2, 12, 14, 30, 40));
     }
 }

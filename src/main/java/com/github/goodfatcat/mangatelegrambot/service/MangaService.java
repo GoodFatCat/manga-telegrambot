@@ -39,4 +39,9 @@ public interface MangaService {
      * @return {@link Manga}
      */
     List<Manga> getAllManga();
+
+    /**
+     * This method update property lastChapterAt in all {@link Manga}
+     */
+    void updateAllMangaLastChapterAt();
 }
