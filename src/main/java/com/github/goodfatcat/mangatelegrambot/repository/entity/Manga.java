@@ -30,16 +30,16 @@ public class Manga {
     @JsonProperty(value = "last_chapter")
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride( name = "number", column = @Column(name = "last_chapter_number")),
-            @AttributeOverride( name = "volume", column = @Column(name = "last_chapter_volume")),
-            @AttributeOverride( name = "name", column = @Column(name = "last_chapter_name"))
+            @AttributeOverride(name = "number", column = @Column(name = "last_chapter_number")),
+            @AttributeOverride(name = "volume", column = @Column(name = "last_chapter_volume")),
+            @AttributeOverride(name = "name", column = @Column(name = "last_chapter_name"))
     })
     private Chapter lastChapter;
     @JsonIgnore
     @ManyToMany
     @JoinTable(name = "user_manga",
-    joinColumns = @JoinColumn(name = "manga_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+            joinColumns = @JoinColumn(name = "manga_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<TelegramUser> readers;
