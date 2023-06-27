@@ -3,7 +3,6 @@ package com.github.goodfatcat.mangatelegrambot.command;
 import com.github.goodfatcat.mangatelegrambot.service.MangaService;
 import com.github.goodfatcat.mangatelegrambot.service.SendBotMessageService;
 import com.github.goodfatcat.mangatelegrambot.service.TelegramUserService;
-import com.github.goodfatcat.mangatelegrambot.service.UserMangaService;
 import com.google.common.collect.ImmutableMap;
 
 import static com.github.goodfatcat.mangatelegrambot.command.CommandName.*;
@@ -18,18 +17,16 @@ public class CommandContainer {
 
     public CommandContainer(SendBotMessageService sendBotMessageService,
                             TelegramUserService telegramUserService,
-                            MangaService mangaService,
-                            UserMangaService userMangaService){
+                            MangaService mangaService) {
         commandMap = ImmutableMap.<String, Command>builder()
-                .put(START.getCommandName(), new StartCommand(sendBotMessageService,telegramUserService))
+                .put(START.getCommandName(), new StartCommand(sendBotMessageService, telegramUserService))
                 .put(STOP.getCommandName(), new StopCommand(sendBotMessageService, telegramUserService))
                 .put(HELP.getCommandName(), new HelpCommand(sendBotMessageService))
                 .put(NO.getCommandName(), new NoCommand(sendBotMessageService))
                 .put(STAT.getCommandName(), new StatCommand(sendBotMessageService, telegramUserService))
                 .put(MANGA.getCommandName(), new MangaCommand(sendBotMessageService,
                         mangaService,
-                        telegramUserService,
-                        userMangaService))
+                        telegramUserService))
                 .build();
 
         unknownCommand = new UnknownCommand(sendBotMessageService);
