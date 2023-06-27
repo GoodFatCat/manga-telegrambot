@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Repository
 public interface TelegramUserRepository extends JpaRepository<TelegramUser, String> {
-    List<TelegramUser> findAllByActiveTrue();
+    List<TelegramUser> findAllByActiveTrueAndMangalibIdNot(long id);
 
     @Query("SELECT user FROM TelegramUser user " +
             "JOIN UserManga um ON user.chatId = um.tgUserId " +
