@@ -1,5 +1,11 @@
 # Release Notes
 
+## 0.5.0
+
+* Created MVP project
+* Added manga command
+* Added schedule executing to send updates
+
 ## 0.4.0-SNAPSHOT
 
 * Added repository layer.
