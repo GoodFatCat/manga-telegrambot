@@ -25,7 +25,7 @@ public class ScheduleExecutingServiceImpl implements ScheduleExecutingService {
     }
 
     @Override
-    @Scheduled(fixedDelay = 1000 * 60 * 60, initialDelay = 1000 * 60 * 5)
+    @Scheduled(fixedDelay = 1000 * 60 * 15, initialDelay = 1000 * 60 * 5)
     public void sendUpdatesToUsers() {
         log.debug("Stating updating manga last chapter");
         List<TelegramUser> activeUsers = telegramUserService.retrieveAllActiveUsers();
