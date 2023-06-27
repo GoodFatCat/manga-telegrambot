@@ -23,11 +23,20 @@ public class TelegramUser {
     @Column(name = "active")
     private boolean active;
 
-    @Column(name = "manga_id")
-    private long mangaId;
+    @Column(name = "mangalib_id")
+    private long mangalibId;
 
     @ManyToMany(mappedBy = "readers")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Manga> readableManga;
+
+    public TelegramUser(String chatId, boolean active, long mangalibId) {
+        this.chatId = chatId;
+        this.active = active;
+        this.mangalibId = mangalibId;
+    }
+
+    public TelegramUser() {
+    }
 }

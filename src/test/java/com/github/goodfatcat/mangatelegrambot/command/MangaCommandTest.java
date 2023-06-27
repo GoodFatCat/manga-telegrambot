@@ -1,11 +1,9 @@
 package com.github.goodfatcat.mangatelegrambot.command;
 
 import com.github.goodfatcat.mangatelegrambot.exception.NoSuchUserException;
-import com.github.goodfatcat.mangatelegrambot.model.Items;
-import com.github.goodfatcat.mangatelegrambot.model.JsonManga;
+import com.github.goodfatcat.mangatelegrambot.DTO.Items;
+import com.github.goodfatcat.mangatelegrambot.DTO.JsonManga;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.Chapter;
-import com.github.goodfatcat.mangatelegrambot.repository.entity.Manga;
-import com.github.goodfatcat.mangatelegrambot.repository.entity.UserManga;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 import static com.github.goodfatcat.mangatelegrambot.command.MangaCommand.*;
@@ -36,7 +33,7 @@ class MangaCommandTest extends AbstractCommandTest{
 
     @Override
     Command getCommand() {
-        return new MangaCommand(sendBotMessageService, mangaService, telegramUserService, userMangaService);
+        return new MangaCommand(sendBotMessageService, mangaService, telegramUserService);
     }
 
     @Override
@@ -69,18 +66,12 @@ class MangaCommandTest extends AbstractCommandTest{
         Items items = new Items();
         items.setMangaSet(jsonMangaSet);
 
-        List<Manga> mangaList = List.of(Manga.getInstanceFromJsonManga(jsonManga));
-        List<UserManga> userMangaList = List.of(new UserManga(jsonManga.getId(),
-                chatId.toString(), jsonManga.getStatus()));
-
-        Mockito.when(mangaService.getBookmarkFromWeb(777)).thenReturn(items);
+        Mockito.when(mangaService.getMangasByMangalibId(777)).thenReturn(items);
 
         getCommand().execute(update);
 
         Mockito.verify(telegramUserService).findByChatId(chatId.toString());
         Mockito.verify(telegramUserService).save(Mockito.any());
-        Mockito.verify(mangaService).saveAll(mangaList);
-        Mockito.verify(userMangaService).saveAll(userMangaList);
         Mockito.verify(mangaTelegramBot).execute(sendMessage);
     }
 
@@ -141,7 +132,7 @@ class MangaCommandTest extends AbstractCommandTest{
         sendMessage.setText(ERROR_NO_USER_MESSAGE);
         sendMessage.enableHtml(true);
 
-        Mockito.when(mangaService.getBookmarkFromWeb(mangalibId)).thenThrow(NoSuchUserException.class);
+        Mockito.when(mangaService.getMangasByMangalibId(mangalibId)).thenThrow(NoSuchUserException.class);
 
         getCommand().execute(update);
 

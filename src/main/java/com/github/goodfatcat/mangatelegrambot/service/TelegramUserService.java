@@ -1,9 +1,11 @@
 package com.github.goodfatcat.mangatelegrambot.service;
 
 
+import com.github.goodfatcat.mangatelegrambot.repository.entity.Manga;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.TelegramUser;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -34,4 +36,6 @@ public interface TelegramUserService {
      */
 
     Optional<TelegramUser> findByChatId(String chatId);
+
+    Map<TelegramUser, List<Manga>> findAllUsersThatReadManga(List<Manga> mangas);
 }
