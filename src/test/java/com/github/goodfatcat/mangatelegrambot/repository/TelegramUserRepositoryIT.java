@@ -35,7 +35,7 @@ public class TelegramUserRepositoryIT {
     @Test
     public void shouldProperlyFindAllActiveUsers() {
         //when
-        List<TelegramUser> users = telegramUserRepository.findAllByActiveTrue();
+        List<TelegramUser> users = telegramUserRepository.findAllByActiveTrueAndMangalibIdNot(0);
 
         //then
         assertEquals(5, users.size());

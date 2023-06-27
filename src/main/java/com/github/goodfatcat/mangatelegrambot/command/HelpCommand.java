@@ -13,9 +13,11 @@ public class HelpCommand implements Command{
 
                     + "<b>Начать\\закончить работу с ботом</b>\n"
                     + "%s - начать работу со мной\n"
+                    + "%s - подключить mangalib аккаунт\n"
                     + "%s - приостановить работу со мной\n\n"
-                    + "%s - получить помощь в работе со мной\n",
-            START.getCommandName(), STOP.getCommandName(), HELP.getCommandName());
+                    + "%s - получить помощь в работе со мной\n"
+                    ,
+            START.getCommandName(), MANGA.getCommandName(), STOP.getCommandName(), HELP.getCommandName());
 
     public HelpCommand(SendBotMessageService sendBotMessageService) {
         this.sendBotMessageService = sendBotMessageService;
