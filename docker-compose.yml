@@ -3,24 +3,32 @@ version: '3.1'
 services:
   matgbot:
     depends_on:
-      - matgbot-db
+      - matgbotdb
+    ports:
+      - '8080:8080'
+    expose:
+      - '8080'
     build:
       context: .
-    environment:
-      BOT_NAME: ${BOT_NAME}
-      BOT_TOKEN: ${BOT_TOKEN}
-      BOT_DB_USERNAME: ${BOT_DB_USERNAME}
-      BOT_DB_PASSWORD: ${BOT_DB_PASSWORD}
+    networks:
+      - mynetwork
+    container_name: 'matgbot'
     restart: always
-  matgbot-db:
+  matgbotdb:
     image: mysql
     restart: always
     environment:
-      MYSQL_USER: ${BOT_DB_USERNAME}
-      MYSQL_PASSWORD: ${BOT_DB_PASSWORD}
+      MYSQL_USER: 'matgbot_db_user'
+      MYSQL_PASSWORD: '0RrQZF52mROh'
       MYSQL_DATABASE: 'matgbot_db'
       MYSQL_ROOT_PASSWORD: 'Mangalibholo18'
+    container_name: 'matgbotdb'
+    networks:
+      - mynetwork
     ports:
-      - '3307:3306'
+      - '3306:3306'
     expose:
-      - '3307'
+      - '3306'
+
+networks:
+  mynetwork:
