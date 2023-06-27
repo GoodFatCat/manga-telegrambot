@@ -1,6 +1,7 @@
 package com.github.goodfatcat.mangatelegrambot.service;
 
 import com.github.goodfatcat.mangatelegrambot.bot.MangaTelegramBot;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,6 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  */
 
 @Service
+@Slf4j
 public class SendBotMessageServiceImpl implements SendBotMessageService {
 
     private final MangaTelegramBot mangaTelegramBot;
@@ -30,8 +32,7 @@ public class SendBotMessageServiceImpl implements SendBotMessageService {
         try {
             mangaTelegramBot.execute(sendMessage);
         } catch (TelegramApiException e) {
-            //todo add logging to the project.
-            e.printStackTrace();
+            log.error(e.toString());
         }
     }
 }
