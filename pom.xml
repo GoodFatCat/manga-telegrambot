@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.github.goodfatcat</groupId>
 	<artifactId>manga-telegrambot</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.5.1</version>
 	<name>Manga telegram bot</name>
 	<description>This project sends notifications to users</description>
 	<properties>
