@@ -4,7 +4,6 @@ import com.github.goodfatcat.mangatelegrambot.command.CommandContainer;
 import com.github.goodfatcat.mangatelegrambot.service.MangaService;
 import com.github.goodfatcat.mangatelegrambot.service.SendBotMessageServiceImpl;
 import com.github.goodfatcat.mangatelegrambot.service.TelegramUserService;
-import com.github.goodfatcat.mangatelegrambot.service.UserMangaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,10 +31,9 @@ public class MangaTelegramBot extends TelegramLongPollingBot {
 
     @Autowired
     public MangaTelegramBot(TelegramUserService telegramUserService,
-                            MangaService mangaService,
-                            UserMangaService userMangaService) {
+                            MangaService mangaService) {
         this.commandContainer = new CommandContainer(
-                new SendBotMessageServiceImpl(this), telegramUserService, mangaService, userMangaService);
+                new SendBotMessageServiceImpl(this), telegramUserService, mangaService);
     }
 
     @Override

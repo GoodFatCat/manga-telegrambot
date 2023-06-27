@@ -3,7 +3,7 @@ package com.github.goodfatcat.mangatelegrambot.repository.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.goodfatcat.mangatelegrambot.model.JsonManga;
+import com.github.goodfatcat.mangatelegrambot.DTO.JsonManga;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,7 +39,7 @@ public class Manga {
     @ManyToMany
     @JoinTable(name = "user_manga",
             joinColumns = @JoinColumn(name = "manga_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+            inverseJoinColumns = @JoinColumn(name = "tg_user_id"))
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<TelegramUser> readers;

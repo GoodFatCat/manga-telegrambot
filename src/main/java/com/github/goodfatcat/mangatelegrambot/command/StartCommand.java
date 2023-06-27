@@ -15,8 +15,8 @@ public class StartCommand implements Command {
     private TelegramUserService telegramUserService;
 
     public final static String START_MESSAGE = "Привет. Я Mangalib Telegram Bot. Я помогу тебе быть в курсе обновлений " +
-            "той манги, которая тебе интересна.\n Для начала работы напиши команду: \"/manga ссылка на аккаунт\" " +
-            "например \"/manga https://mangalib.me/user/777\".";
+            "той манги, которая тебе интересна.\nДля начала работы напиши команду: \"/manga ссылка на аккаунт\" " +
+            "например \"/manga https://mangalib.me/user/(ваш id)\".";
 
     public StartCommand(SendBotMessageService sendBotMessageService, TelegramUserService telegramUserService) {
         this.sendBotMessageService = sendBotMessageService;

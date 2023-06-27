@@ -1,26 +1,18 @@
 package com.github.goodfatcat.mangatelegrambot.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.goodfatcat.mangatelegrambot.exception.NoSuchUserException;
-import com.github.goodfatcat.mangatelegrambot.model.Items;
+import com.github.goodfatcat.mangatelegrambot.DTO.Items;
 import com.github.goodfatcat.mangatelegrambot.repository.MangaRepository;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.Manga;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import com.github.goodfatcat.mangatelegrambot.repository.entity.TelegramUser;
+import com.github.goodfatcat.mangatelegrambot.repository.entity.UserManga;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Implementation of {@link MangaService} interface.
@@ -29,16 +21,17 @@ import java.util.NoSuchElementException;
 public class MangaServiceImpl implements MangaService {
     private MangaRepository mangaRepository;
     private WebClient webClient;
-    private ObjectMapper objectMapper;
+    private UserMangaService userMangaService;
 
     @Autowired
-    public MangaServiceImpl(MangaRepository mangaRepository, WebClient webClient, ObjectMapper objectMapper) {
+    public MangaServiceImpl(MangaRepository mangaRepository, WebClient webClient, UserMangaService userMangaService) {
         this.mangaRepository = mangaRepository;
         this.webClient = webClient;
-        this.objectMapper = objectMapper;
+        this.userMangaService = userMangaService;
     }
 
-    public Items getBookmarkFromWeb(int id) {
+    @Override
+    public Items getMangasByMangalibId(long id) {
         Items jsonWrap = webClient
                 .get()
                 .uri("bookmark/" + id)
@@ -56,7 +49,7 @@ public class MangaServiceImpl implements MangaService {
     @Override
     public void saveAll(List<Manga> mangas) {
         if (mangas == null) {
-            throw new RuntimeException();
+            throw new RuntimeException("Mangas must be not null");
         }
         mangaRepository.saveAll(mangas);
     }
@@ -67,58 +60,49 @@ public class MangaServiceImpl implements MangaService {
     }
 
     @Override
-    public List<Manga> getAllManga() {
+    public List<Manga> getAllMangas() {
         return mangaRepository.findAll();
     }
 
     @Override
-    public void updateAllMangaLastChapterAt() {
-        List<Manga> allManga = getAllManga();
+    public List<Manga> updateAllMangaLastChapter(List<TelegramUser> activeUsers) {
+        Set<Manga> uniqMangas = new HashSet<>();
+        List<Manga> updatedMangas = new ArrayList<>();
+        Map<String, List<UserManga>> userMangaMap = new HashMap<>();
 
-        for (Manga manga : allManga) {
-            String HTML = getHtml(manga);
-            assert HTML != null;
+        getUniqMangasAndUserMangaMap(activeUsers, uniqMangas, userMangaMap);
+        updateOrSaveManga(uniqMangas, updatedMangas);
 
-            Document doc = Jsoup.parse(HTML);
-            Elements scripts = doc.getElementsByTag("script");
-
-            updateDateTime(manga, scripts);
+        for (String activeTelegramUserId : userMangaMap.keySet()) {
+            userMangaService.saveAll(userMangaMap.get(activeTelegramUserId));
         }
-
-        saveAll(allManga);
+        return updatedMangas;
     }
 
-    private String getHtml(Manga manga) {
-        String slug = manga.getSlug();
-
-        return webClient.get()
-                .uri(slug)
-                .retrieve()
-                .bodyToMono(String.class)
-                .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)))
-                .block();
+    private void getUniqMangasAndUserMangaMap(List<TelegramUser> activeUsers, Set<Manga> uniqMangas, Map<String, List<UserManga>> userMangaMap) {
+        for (TelegramUser activeUser : activeUsers) {
+            Items items = getMangasByMangalibId(activeUser.getMangalibId());
+            List<Manga> mangaList = Items.getMangaList(items);
+            userMangaMap.put(activeUser.getChatId(), Items.getUserMangaList(activeUser.getChatId(), items));
+            uniqMangas.addAll(mangaList);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
-    private void updateDateTime(Manga manga, Elements scripts) {
-        for (Element script : scripts) {
-            String scriptValue = script.data().trim();
-            if (scriptValue.contains("window.__DATA__")) {
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                String json = scriptValue.split("window.__DATA__ = ")[1];
-                try {
-                    JsonNode tree = objectMapper.readTree(json);
-                    String chapterCreatedAt = tree.get("chapters")
-                            .get("list")
-                            .get(0)
-                            .get("chapter_created_at")
-                            .toString()
-                            .replace("\"", "");
-
-                    LocalDateTime newDateTime = LocalDateTime.parse(chapterCreatedAt, dateTimeFormatter);
-                    manga.setLastChapterAt(newDateTime);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+    private void updateOrSaveManga(Set<Manga> uniqMangas, List<Manga> updatedMangas) {
+        for (Manga manga : uniqMangas) {
+            if (mangaRepository.existsById(manga.getId())) {
+                Manga oldManga = getManga(manga.getId());
+                if (manga.getLastChapterAt().isAfter(oldManga.getLastChapterAt())) {
+                    mangaRepository.save(manga);
+                    updatedMangas.add(manga);
                 }
+            } else {
+                mangaRepository.save(manga);
             }
         }
     }

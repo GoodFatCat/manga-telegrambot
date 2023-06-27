@@ -1,8 +1,8 @@
 package com.github.goodfatcat.mangatelegrambot.service;
 
 import com.github.goodfatcat.mangatelegrambot.exception.NoSuchUserException;
-import com.github.goodfatcat.mangatelegrambot.model.Items;
-import com.github.goodfatcat.mangatelegrambot.model.JsonManga;
+import com.github.goodfatcat.mangatelegrambot.DTO.Items;
+import com.github.goodfatcat.mangatelegrambot.DTO.JsonManga;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.Chapter;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.Manga;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +30,7 @@ public class MangaServiceImplTest {
     public void shouldGetBookmarkFromWeb() {
         String userId = "2098855";
 
-        Items items = mangaService.getBookmarkFromWeb(Integer.parseInt(userId));
+        Items items = mangaService.getMangasByMangalibId(Integer.parseInt(userId));
 
         Assertions.assertNotNull(items);
         Assertions.assertFalse(items.getMangaSet().isEmpty());
@@ -39,7 +39,7 @@ public class MangaServiceImplTest {
     @Test
     public void shouldThrowNoSuchUserException() {
         int userMangalibId = 9999999;
-        Assertions.assertThrows(NoSuchUserException.class, () -> mangaService.getBookmarkFromWeb(userMangalibId));
+        Assertions.assertThrows(NoSuchUserException.class, () -> mangaService.getMangasByMangalibId(userMangalibId));
     }
 
     @Test
@@ -50,13 +50,13 @@ public class MangaServiceImplTest {
 
         mangaService.saveAll(expectedData);
 
-        List<Manga> actualData = mangaService.getAllManga();
+        List<Manga> actualData = mangaService.getAllMangas();
         Assertions.assertEquals(expectedData, actualData);
     }
 
     private static List<Manga> initData() {
         JsonManga jsonManga = new JsonManga();
-        jsonManga.setId(1);
+        jsonManga.setId(39);
         jsonManga.setCover("QPXzTLH6zrIw");
         jsonManga.setStatus(2);
         jsonManga.setRusName("Берсерк");
@@ -72,7 +72,7 @@ public class MangaServiceImplTest {
 
         Manga manga1 = Manga.getInstanceFromJsonManga(jsonManga);
 
-        jsonManga.setId(2);
+        jsonManga.setId(442);
         jsonManga.setCover("CvABU1zFzds8");
         jsonManga.setStatus(2);
         jsonManga.setRusName("Получеловек");
@@ -92,21 +92,5 @@ public class MangaServiceImplTest {
         expectedData.add(manga1);
         expectedData.add(manga2);
         return expectedData;
-    }
-
-    @Test
-    public void shouldProperlyUpdateLastChapterAt() {
-        List<Manga> oldMangas = initData();
-        mangaService.saveAll(oldMangas);
-
-        mangaService.updateAllMangaLastChapterAt();
-
-        List<Manga> newMangas = mangaService.getAllManga();
-
-        Assertions.assertNotEquals(oldMangas, newMangas);
-        Assertions.assertEquals(mangaService.getManga(1).getLastChapterAt(),
-                LocalDateTime.of(2019, 8, 23, 8, 23, 39));
-        Assertions.assertEquals(mangaService.getManga(0).getLastChapterAt(),
-                LocalDateTime.of(2021, 2, 12, 14, 30, 40));
     }
 }

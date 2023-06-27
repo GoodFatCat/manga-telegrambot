@@ -7,24 +7,23 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "user_manga")
+@IdClass(value = UserMangaId.class)
 public class UserManga {
-    // todo change id field
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
     @Column(name = "manga_id")
+    @Id
     private long mangaId;
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "tg_user_id")
+    @Id
+    private String tgUserId;
 
     private ReadingStatus status;
 
     public UserManga() {
     }
 
-    public UserManga(long mangaId, String userId, int status) {
+    public UserManga(long mangaId, String tgUserId, int status) {
         this.mangaId = mangaId;
-        this.userId = userId;
+        this.tgUserId = tgUserId;
         this.status = ReadingStatus.findByStatusCode(status);
     }
 }

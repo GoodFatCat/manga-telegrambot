@@ -1,8 +1,10 @@
 package com.github.goodfatcat.mangatelegrambot.service;
 
-import com.github.goodfatcat.mangatelegrambot.model.Items;
+import com.github.goodfatcat.mangatelegrambot.DTO.Items;
+import com.github.goodfatcat.mangatelegrambot.DTO.JsonManga;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.Manga;
-import com.github.goodfatcat.mangatelegrambot.model.JsonManga;
+import com.github.goodfatcat.mangatelegrambot.repository.entity.TelegramUser;
+import com.github.goodfatcat.mangatelegrambot.repository.entity.Chapter;
 
 import java.util.List;
 
@@ -11,12 +13,12 @@ import java.util.List;
  */
 public interface MangaService {
     /**
-     * This method get wrap {@link Items} of {@link JsonManga} from mangaLib.me/bookmark/{id}
+     * This method return wrap {@link Items} of {@link JsonManga} from mangaLib.me/bookmark/{id}
      *
-     * @param id provided user id in mangaLib.me
+     * @param id provided user id in mangalib.me
      * @return {@link Items} model for parse from json
      */
-    Items getBookmarkFromWeb(int id);
+    Items getMangasByMangalibId(long id);
 
     /**
      * This method save manga in database
@@ -36,12 +38,14 @@ public interface MangaService {
     /**
      * This method find all {@link Manga} from database
      *
-     * @return {@link Manga}
+     * @return List of {@link Manga}
      */
-    List<Manga> getAllManga();
+    List<Manga> getAllMangas();
 
     /**
-     * This method update property lastChapterAt in all {@link Manga}
+     * This method update property {@link Chapter} lastChapter and lastChapterAt in all {@link Manga}
+     *
+     * @return List updated {@link Manga}
      */
-    void updateAllMangaLastChapterAt();
+    List<Manga> updateAllMangaLastChapter(List<TelegramUser> activeUsers);
 }

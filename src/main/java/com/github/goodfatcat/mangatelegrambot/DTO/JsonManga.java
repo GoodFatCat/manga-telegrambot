@@ -1,4 +1,4 @@
-package com.github.goodfatcat.mangatelegrambot.model;
+package com.github.goodfatcat.mangatelegrambot.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
