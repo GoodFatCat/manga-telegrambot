@@ -32,13 +32,18 @@ public class MangaServiceImpl implements MangaService {
 
     @Override
     public Items getMangasByMangalibId(long id) {
-        Items jsonWrap = webClient
-                .get()
-                .uri("bookmark/" + id)
-                .retrieve()
-                .bodyToMono(Items.class)
-                .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)))
-                .block();
+        Items jsonWrap;
+        try {
+            jsonWrap = webClient
+                    .get()
+                    .uri("bookmark/" + id)
+                    .retrieve()
+                    .bodyToMono(Items.class)
+                    .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)))
+                    .block();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         if (jsonWrap == null || jsonWrap.getMangaSet().isEmpty()) {
             throw new NoSuchUserException("No such user or user has not any bookmark");

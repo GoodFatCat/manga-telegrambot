@@ -5,27 +5,33 @@ import com.github.goodfatcat.mangatelegrambot.repository.entity.TelegramUser;
 import com.github.goodfatcat.mangatelegrambot.service.MangaService;
 import com.github.goodfatcat.mangatelegrambot.service.SendBotMessageService;
 import com.github.goodfatcat.mangatelegrambot.service.TelegramUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
  * MangaCommand {@link Command}
  */
+
+@Slf4j
 public class MangaCommand implements Command {
 
     private SendBotMessageService sendBotMessageService;
     private MangaService mangaService;
     private TelegramUserService telegramUserService;
 
-    private static final String LINK_PREFIX = "https://mangalib.me/user/";
+    private static final String LINK_PREFIX = "https://mangalib\\.me/user/";
     public static final String ERROR_NO_LINK_MESSAGE = "Введите ссылку на ваш профиль. " +
             "Пример: \"/manga https://mangalib.me/user/(ваш id)\".";
     public static final String ERROR_LINK_MESSAGE = "Ошибка ссылки. Сссылка должна " +
             "выглядеть так: \"https://mangalib.me/user/(ваш id)\"." +
             " Или вы можете использовать только id";
     public static final String ERROR_NO_USER_MESSAGE = "Такого пользователя нет или у вас нет закладок.";
+    public static final String MANGALIB_SERVER_ERROR_MESSAGE = "Во время подключения к сайту " +
+            "mangalib произошла ошибка, возможно на сайте проводяться технические работы.";
     public static final String SUCCESS_MESSAGE = "Вы успешно добавили мангу, " +
             "вы будете получать оповещения из списка читаю. Бот будет автоматически обновлять список, " +
             "обновлять его самостоятельно не надо.";
+
 
 
     public MangaCommand(SendBotMessageService sendBotMessageService, MangaService mangaService, TelegramUserService telegramUserService) {
@@ -52,6 +58,10 @@ public class MangaCommand implements Command {
             mangaService.getMangasByMangalibId(mangalibId);
         } catch (NoSuchUserException e) {
             sendBotMessageService.sendMessage(telegramUserId, ERROR_NO_USER_MESSAGE);
+            return;
+        } catch (RuntimeException e) {
+            log.error(e.toString());
+            sendBotMessageService.sendMessage(telegramUserId, MANGALIB_SERVER_ERROR_MESSAGE);
             return;
         }
 

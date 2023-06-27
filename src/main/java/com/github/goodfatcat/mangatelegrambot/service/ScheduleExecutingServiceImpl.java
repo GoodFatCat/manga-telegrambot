@@ -29,7 +29,13 @@ public class ScheduleExecutingServiceImpl implements ScheduleExecutingService {
     public void sendUpdatesToUsers() {
         log.debug("Stating updating manga last chapter");
         List<TelegramUser> activeUsers = telegramUserService.retrieveAllActiveUsers();
-        List<Manga> updatedMangas = mangaService.updateAllMangaLastChapter(activeUsers);
+        List<Manga> updatedMangas;
+        try {
+            updatedMangas = mangaService.updateAllMangaLastChapter(activeUsers);
+        } catch (RuntimeException e) {
+            log.error(e.toString());
+            return;
+        }
 
         Map<TelegramUser, List<Manga>> allUsersThatReadManga = telegramUserService.findAllUsersThatReadManga(updatedMangas);
 
