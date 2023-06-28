@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Prepare Jar
-mvn clean
-mvn package
+./mvnw clean
+./mvnw package
 
 # Ensure, that docker-compose stopped
 docker-compose stop
