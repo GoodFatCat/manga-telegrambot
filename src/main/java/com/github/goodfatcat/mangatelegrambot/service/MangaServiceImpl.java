@@ -43,11 +43,12 @@ public class MangaServiceImpl implements MangaService {
                     .get()
                     .uri("bookmark/" + id)
                     .retrieve()
-                    .onStatus(HttpStatus::is4xxClientError,
+                    .onStatus(HttpStatus.FORBIDDEN::equals,
                             clientResponse -> clientResponse.bodyToMono(String.class).map(RuntimeException::new))
                     .bodyToMono(String.class)
                     .block();
-            throw new Exception(errorMessage);
+            log.error(errorMessage);
+            throw new Exception();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
