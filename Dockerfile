@@ -6,9 +6,13 @@ ADD . $HOME
 RUN mvn package -DskipTests
 
 FROM adoptopenjdk/openjdk11:ubi
-ENV BOT_NAME=test_mangalib_bot
-ENV BOT_TOKEN=5384303669:AAHgmQVdQPwP4IjKw5yCCpyvilGmLf7edWE
-ENV BOT_DB_USERNAME=SomeUser
-ENV BOT_DB_PASSWORD=SomePassword
+ARG ARG_BOT_NAME
+ARG ARG_BOT_TOKEN
+ARG ARG_BOT_DB_USERNAME
+ARG ARG_BOT_DB_PASSWORD
+ENV BOT_NAME=$ARG_BOT_NAME
+ENV BOT_TOKEN=$ARG_BOT_TOKEN
+ENV BOT_DB_USERNAME=$ARG_BOT_DB_USERNAME
+ENV BOT_DB_PASSWORD=$ARG_BOT_DB_PASSWORD
 COPY --from=build /usr/app/target/*.jar /app/app.jar
 ENTRYPOINT ["java","-Dspring.datasource.password=${BOT_DB_PASSWORD}", "-Dbot.username=${BOT_NAME}", "-Dbot.token=${BOT_TOKEN}", "-Dspring.datasource.username=${BOT_DB_USERNAME}", "-jar", "/app/app.jar"]
