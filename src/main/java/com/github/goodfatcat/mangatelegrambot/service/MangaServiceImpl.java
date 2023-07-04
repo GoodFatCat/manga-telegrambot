@@ -39,7 +39,6 @@ public class MangaServiceImpl implements MangaService {
                     .uri("bookmark/" + id)
                     .retrieve()
                     .bodyToMono(Items.class)
-                    .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)))
                     .block();
         } catch (Exception e) {
             throw new RuntimeException(e);
