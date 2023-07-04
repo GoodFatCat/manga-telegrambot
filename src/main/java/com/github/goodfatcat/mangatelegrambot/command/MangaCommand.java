@@ -60,7 +60,9 @@ public class MangaCommand implements Command {
             sendBotMessageService.sendMessage(telegramUserId, ERROR_NO_USER_MESSAGE);
             return;
         } catch (RuntimeException e) {
-            log.error(e.toString());
+            for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+                log.error(stackTraceElement.toString());
+            }
             sendBotMessageService.sendMessage(telegramUserId, MANGALIB_SERVER_ERROR_MESSAGE);
             return;
         }
