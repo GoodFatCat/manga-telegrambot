@@ -6,12 +6,9 @@ import com.github.goodfatcat.mangatelegrambot.repository.MangaRepository;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.Manga;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.TelegramUser;
 import com.github.goodfatcat.mangatelegrambot.repository.entity.UserManga;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
@@ -21,7 +18,6 @@ import java.util.*;
  * Implementation of {@link MangaService} interface.
  */
 @Service
-@Slf4j
 public class MangaServiceImpl implements MangaService {
     private MangaRepository mangaRepository;
     private WebClient webClient;
@@ -36,27 +32,23 @@ public class MangaServiceImpl implements MangaService {
 
     @Override
     public Items getMangasByMangalibId(long id) {
-        Items jsonWrap = null;
-        String errorMessage;
+        Items jsonWrap;
         try {
-            errorMessage = webClient
+            jsonWrap = webClient
                     .get()
                     .uri("bookmark/" + id)
                     .retrieve()
-                    .onStatus(HttpStatus.FORBIDDEN::equals,
-                            clientResponse -> clientResponse.bodyToMono(String.class).map(RuntimeException::new))
-                    .bodyToMono(String.class)
+                    .bodyToMono(Items.class)
+                    .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)))
                     .block();
-            log.error(errorMessage);
-            throw new Exception();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-//
-//        if (jsonWrap == null || jsonWrap.getMangaSet().isEmpty()) {
-//            throw new NoSuchUserException("No such user or user has not any bookmark");
-//        }
-//        return jsonWrap;
+
+        if (jsonWrap == null || jsonWrap.getMangaSet().isEmpty()) {
+            throw new NoSuchUserException("No such user or user has not any bookmark");
+        }
+        return jsonWrap;
     }
 
     @Override

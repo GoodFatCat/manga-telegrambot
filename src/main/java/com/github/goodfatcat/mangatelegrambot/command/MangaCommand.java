@@ -8,8 +8,6 @@ import com.github.goodfatcat.mangatelegrambot.service.TelegramUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.Arrays;
-
 /**
  * MangaCommand {@link Command}
  */
@@ -62,7 +60,7 @@ public class MangaCommand implements Command {
             sendBotMessageService.sendMessage(telegramUserId, ERROR_NO_USER_MESSAGE);
             return;
         } catch (RuntimeException e) {
-            log.error(Arrays.toString(e.getStackTrace()));
+            log.error(e.toString());
             sendBotMessageService.sendMessage(telegramUserId, MANGALIB_SERVER_ERROR_MESSAGE);
             return;
         }
