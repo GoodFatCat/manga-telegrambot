@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class ApplicationConfiguration {
     @Bean
     public WebClient webClient() {
-        String baseUrl = "https://mangalib.me/";
+        String baseUrl = "https://mangalib.org/";
         return WebClient.builder()
                 .baseUrl(baseUrl)
                 .build();
